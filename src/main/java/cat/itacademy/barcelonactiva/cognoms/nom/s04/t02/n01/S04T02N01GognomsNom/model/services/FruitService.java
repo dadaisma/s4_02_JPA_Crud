@@ -44,7 +44,7 @@ public class FruitService {
     }
 
     @Transactional(readOnly = true)
-    public List<Fruit> getAllFruits(){
+    public Iterable<Fruit> getAllFruits(){
         return fruitRepository.findAll();
     }
 

@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/fruit")
@@ -62,7 +64,9 @@ public class FruitController {
     @GetMapping("/getAll")
     public ResponseEntity<List<Fruit>> getAllFruits() {
         try {
-            List<Fruit> fruits = fruitService.getAllFruits();
+            Iterable<Fruit> fruitIterable = fruitService.getAllFruits();
+            List<Fruit> fruits = StreamSupport.stream(fruitIterable.spliterator(), false)
+                    .collect(Collectors.toList());
             return new ResponseEntity<>(fruits, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
