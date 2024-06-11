@@ -14,8 +14,8 @@ import java.util.Optional;
 @RequestMapping("/fruit")
 public class FruitController {
 
-   @Autowired
-   private FruitService fruitService;
+    @Autowired
+    private FruitService fruitService;
 
     @PostMapping("/add")
     public ResponseEntity<Fruit> addFruit(@RequestBody Fruit fruit) {
@@ -23,29 +23,57 @@ public class FruitController {
             Fruit addedFruit = fruitService.addFruit(fruit);
             return new ResponseEntity<>(addedFruit, HttpStatus.CREATED);
         } catch (Exception e) {
-            // Handle the exception
-            e.printStackTrace(); // Log the exception for debugging purposes (optional)
+
+            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-   @PutMapping("/update")
-    public Fruit updateFruit(@RequestBody Fruit fruit){
-       return fruitService.updateFruit(fruit);
-   }
 
-   @DeleteMapping("/delete/{id}")
-    public void deleteFruit(@PathVariable int id){
-       fruitService.deleteFruit(id);
-   }
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Fruit> updateFruit(@PathVariable int id, @RequestBody Fruit fruit) {
+        try {
+            Fruit updatedFruit = fruitService.updateFruit(id, fruit);
+            if (updatedFruit == null) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(updatedFruit, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
-   @GetMapping("/getAll")
-    public List<Fruit> getAllFruits(){
-       return fruitService.getAllFruits();
-   }
+    }
 
-   @GetMapping("/getOne/{id}")
-    public Optional<Fruit> getFruitById(@PathVariable int id){
-       return fruitService.getFruitById(id);
-   }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Fruit> deleteFruit(@PathVariable int id) {
+        try {
+            boolean isDeleted = fruitService.deleteFruit(id);
+            if (!isDeleted) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
+    }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<List<Fruit>> getAllFruits() {
+        try {
+            List<Fruit> fruits = fruitService.getAllFruits();
+            return new ResponseEntity<>(fruits, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @GetMapping("/getOne/{id}")
+    public ResponseEntity<Fruit> getFruitById(@PathVariable int id) {
+        Optional<Fruit> fruit = fruitService.getFruitById(id);
+        return fruit.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
 }

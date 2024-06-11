@@ -17,12 +17,26 @@ public class FruitService {
         return fruitRepository.save(fruit);
     }
 
-    public Fruit updateFruit(Fruit fruit){
-        return fruitRepository.save(fruit);
+    public Fruit updateFruit(int id, Fruit fruit){
+        Optional<Fruit> existingFruit = fruitRepository.findById(id);
+        if (existingFruit.isPresent()) {
+            Fruit fruitToUpdate = existingFruit.get();
+            fruitToUpdate.setName(fruit.getName());
+            fruitToUpdate.setQuantityKg(fruit.getQuantityKg());
+            return fruitRepository.save(fruitToUpdate);
+        } else {
+            return null;
+        }
     }
 
-    public void deleteFruit(int id){
-         fruitRepository.deleteById(id);
+    public boolean deleteFruit(int id){
+        Optional<Fruit> existingFruit = fruitRepository.findById(id);
+        if(existingFruit.isPresent()){
+            fruitRepository.deleteById(id);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public List<Fruit> getAllFruits(){
