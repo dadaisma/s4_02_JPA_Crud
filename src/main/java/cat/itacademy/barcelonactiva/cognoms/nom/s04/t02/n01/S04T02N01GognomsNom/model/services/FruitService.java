@@ -4,6 +4,7 @@ import cat.itacademy.barcelonactiva.cognoms.nom.s04.t02.n01.S04T02N01GognomsNom.
 import cat.itacademy.barcelonactiva.cognoms.nom.s04.t02.n01.S04T02N01GognomsNom.model.repository.FruitRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,10 +14,12 @@ public class FruitService {
     @Autowired
     private FruitRepository fruitRepository;
 
+    @Transactional
     public Fruit addFruit(Fruit fruit) {
         return fruitRepository.save(fruit);
     }
 
+    @Transactional
     public Fruit updateFruit(int id, Fruit fruit){
         Optional<Fruit> existingFruit = fruitRepository.findById(id);
         if (existingFruit.isPresent()) {
@@ -29,6 +32,7 @@ public class FruitService {
         }
     }
 
+    @Transactional
     public boolean deleteFruit(int id){
         Optional<Fruit> existingFruit = fruitRepository.findById(id);
         if(existingFruit.isPresent()){
@@ -39,10 +43,12 @@ public class FruitService {
         }
     }
 
+    @Transactional(readOnly = true)
     public List<Fruit> getAllFruits(){
         return fruitRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public Optional<Fruit> getFruitById(int id){
         return fruitRepository.findById(id);
     }
